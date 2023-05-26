@@ -57,7 +57,7 @@ async function getRecipeByID(req, res){
 
 async function getRecipeByName(req, res){
     try{
-        var name = req.query.name;
+        var name = req.query.name;          
         var responseDB = [];
         if(name){
             responseDB = await Recipe.findAll({where: {name: name},
@@ -69,7 +69,7 @@ async function getRecipeByName(req, res){
                     }
                 }})
             }
-        if(!name) name = ''        
+        if(!name) name = ''              //Se le asinga este valor para poder hacer el request sin parametro
         const linkRequest = `https://api.spoonacular.com/recipes/complexSearch?query=${name}&apiKey=${API_KEY}&number=100&addRecipeInformation=true`
         const responseApi = await axios.get(linkRequest)
         const recetasApi = []
