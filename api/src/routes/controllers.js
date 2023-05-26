@@ -14,9 +14,11 @@ async function getRecipeByID(req, res){
     
     try{
         //Buscamos en la BD                         Verificar su el include está bien
+        if(isNaN(id)){
         const response = await Recipe.findByPk(id, {include: Diets});
         if(response){
             res.status(200).json(response);
+        }
         }else{
             const responseAPI = await axios.get(reqLink);
             if(responseAPI){
@@ -55,15 +57,19 @@ async function getRecipeByID(req, res){
 
 async function getRecipeByName(req, res){
     try{
-        const name = req.query.query;
-        const responseDB = await Recipe.findAll({where: {name: name},
-            include: {
-                model: Diets,
-                attributes:['name'],
-                through: {
-                    attributes: []
-                }
-            }})
+        var name = req.query.name;
+        var responseDB = [];
+        if(name){
+            responseDB = await Recipe.findAll({where: {name: name},
+                include: {
+                    model: Diets,
+                    attributes:['name'],
+                    through: {
+                        attributes: []
+                    }
+                }})
+            }
+        if(!name) name = ''        
         const linkRequest = `https://api.spoonacular.com/recipes/complexSearch?query=${name}&apiKey=${API_KEY}&number=100&addRecipeInformation=true`
         const responseApi = await axios.get(linkRequest)
         const recetasApi = []
