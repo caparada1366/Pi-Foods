@@ -1,13 +1,14 @@
 import React from 'react'
 import SearchBar from './SearchBar'
 import './NavBar.css'
+import { Link } from 'react-router-dom'
 
 export default function NavBar({onSearch}) {
   return (
     <div className='navbar'>
-        <button>Home</button>
+        <Link to='/home'><button>Home</button></Link>
         <SearchBar onSearch={onSearch}></SearchBar>
-        <button>Crear receta</button>
+        <Link to='/form'><button>Crear receta</button></Link>
      
     </div>
   )
