@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import  axios  from 'axios';
+import './Detail.css'
 
 export default function Detail() {
   var {id} = useParams();
@@ -17,14 +18,31 @@ export default function Detail() {
     }).catch(err => err.message)
   },[])
 
+  function limpiarSummary(){
+      var summaryHtml = receta.summary;
+    return { __html: summaryHtml}
+  }
   return (
-    <div>
-      <h1>{receta.id}</h1>
-      <h2>{receta.name}</h2>
-      <h2>{receta.summary}</h2>
-      <h2>{receta.health_Score}</h2>
-      <h2>{receta.stepByStep}</h2>
-      <h2>{receta.diets}</h2>
-    </div>
+      <div className='detail'>
+        <h2>ID: {receta.id}</h2>
+        <h2>Name: {receta.name}</h2>
+        <h2>Health Score: {receta.health_Score}</h2>
+        <h2>Diets: {receta.diets?.join(', ')}</h2>
+        <img src={receta.image} alt={receta.name}/>
+        <h3>Summary</h3>
+        <div style={{textAlign: 'left', justifyContent: 'left'}} dangerouslySetInnerHTML={limpiarSummary()}/>
+        <h3>Step by Step</h3>
+        <ul style={{textAlign: 'left'}}>
+          {receta.stepByStep && receta.stepByStep.map((st)=>{
+            return <li>{st}</li>
+          })}
+        </ul>
+        
+      </div>
+     
+        
+     
+    
+    
   )
 }

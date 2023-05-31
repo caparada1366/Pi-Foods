@@ -20,7 +20,7 @@ function App() {
 
   return (
     <div className="App">
-     {location.pathname === '/' ? <LandingP onClick={onClick}></LandingP> : <NavBar onSearch={onSearch}></NavBar>}
+     {location.pathname === '/' ? <LandingP onClick={onClick}></LandingP> : <NavBar></NavBar>}
      <Routes>
       <Route path='/home' element={<CardContainer/>}></Route>
       <Route path='/form' element={<FormCreateRecipe/>}></Route>

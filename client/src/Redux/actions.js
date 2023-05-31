@@ -75,3 +75,14 @@ export function prevPage(){
         type: 'PREV_PAGE'
     }
 }
+
+//Acción para buscar receta
+export function searchRecipe(name){
+    return async (dispatch) =>{
+        const data = (await axios.get(`http://localhost:3001/recipes?name=${name}`)).data
+        dispatch({
+            type: 'SEARCH_RECIPE',
+            payload: data
+        })  
+    }
+}

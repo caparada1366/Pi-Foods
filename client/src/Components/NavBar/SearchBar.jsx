@@ -1,7 +1,10 @@
 import React, {useState} from 'react'
+import { useDispatch } from 'react-redux';
+import { searchRecipe, quitarFiltros } from '../../Redux/actions';
 
 
-export default function SearchBar({onSearch}) {
+export default function SearchBar() {
+   const dispatch = useDispatch();
 
   const [receta, setReceta] = useState("");
 
@@ -10,14 +13,24 @@ export default function SearchBar({onSearch}) {
   }
   function handlePressEnter(event){
      if(event.keyCode ===13){
-        onSearch(receta)
+        handleClickSearch(receta)
      }
+  }
+
+  function handleClickSearch(e){
+   dispatch(searchRecipe(receta))
+  }
+
+  function handleClickBorrar(e){
+   dispatch(quitarFiltros())
+   
   }
 
   return (
     <div>
         <input onChange={handleChange} onKeyDown={handlePressEnter}></input>
-        <button onClick={()=>onSearch(receta)}>Buscar Receta</button>
+        <button onClick={handleClickSearch}>Buscar Receta</button>
+        <button onClick={handleClickBorrar}>Borrar busqueda</button>
     </div>
   )
 }

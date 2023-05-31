@@ -103,6 +103,11 @@ export default function rootReducer(state = initialState, {type, payload}){
                 ...state,
                 pagActual: state.pagActual+1
             }
+        case 'SEARCH_RECIPE':
+            return {
+                ...state,
+                recipes: payload
+            }
          default: 
          return state;   
     }
