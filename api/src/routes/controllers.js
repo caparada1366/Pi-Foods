@@ -59,6 +59,7 @@ async function getRecipeByName(req, res){
     try{
         var name = req.query.name;          
         var responseDB = [];
+        var recipesDB=[];
         if(name){
             responseDB = await Recipe.findAll({where: {name: name},
                 include: {
@@ -68,8 +69,62 @@ async function getRecipeByName(req, res){
                         attributes: []
                     }
                 }})
-            }
-        if(!name) name = ''              //Se le asinga este valor para poder hacer el request sin parametro
+            responseDB.forEach((rec)=>{
+                const{id, name, image, summary, health_Score, diets, stepByStep} = rec
+                recipesDB.push({id, name, image,summary, health_Score, diets: diets.map(d=>d.name), stepByStep})
+            })    
+
+            const linkRequest = `https://api.spoonacular.com/recipes/complexSearch?query=${name}&apiKey=${API_KEY}&number=100&addRecipeInformation=true`
+            const responseApi = await axios.get(linkRequest)
+            const recetasApi = []
+                if(responseApi){
+                    const data = responseApi.data;
+                    const recipes = data.results;               //extraemos el array de recetas del objeto results que responde la api
+                    
+                    recipes.forEach((re)=>{
+                        var sbs = function(){
+                            var pasos =[]
+                            var aux = re.analyzedInstructions[0];
+                            if(aux){
+                                aux.steps.forEach(st => {
+                                    pasos.push(st.number +". "+ st.step)
+                                });
+                            }        
+                            return pasos;
+                        }
+                        var aux = {
+                            id: re.id,
+                            name: re.title,
+                            image: re.image,
+                            summary: re.summary,
+                            health_Score: re.healthScore,
+                            diets: re.diets,
+                            stepByStep: sbs()
+                        }
+                        recetasApi.push(aux);
+                    })    
+                }
+            const allRecipes= recetasApi.concat(recipesDB);
+            res.status(200).json(allRecipes)
+        }
+        else{
+            responseDB = await Recipe.findAll({
+                include: {
+                    model: Diets,
+                    attributes:['name'],
+                    through: {
+                        attributes: []
+                    }
+                }})
+            responseDB.forEach((rec)=>{
+                const{id, name, image, summary, health_Score, diets, stepByStep} = rec
+                var dietas = diets.map(d=>d.name)
+                recipesDB.push({id, name, image,summary, health_Score, diets: dietas , stepByStep})
+            })       
+        
+   
+        name = ''              //Se le asinga este valor para poder hacer el request sin parametro
+
         const linkRequest = `https://api.spoonacular.com/recipes/complexSearch?query=${name}&apiKey=${API_KEY}&number=100&addRecipeInformation=true`
         const responseApi = await axios.get(linkRequest)
         const recetasApi = []
@@ -100,8 +155,9 @@ async function getRecipeByName(req, res){
                     recetasApi.push(aux);
                 })    
             }
-        const allRecipes= recetasApi.concat(responseDB);
+        const allRecipes= recetasApi.concat(recipesDB);
         res.status(200).json(allRecipes)
+        }
     }
     catch (err){
         res.status(404).send(err.message)
@@ -125,7 +181,7 @@ async function createRecipe(req,res){
         return res.status(201).json(newRecipe)
     }
     catch(err){
-        return res.status(404).send(err.message)
+        return res.status(402).send(err.message)
     }
 }
 
