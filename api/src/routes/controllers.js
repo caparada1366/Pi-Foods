@@ -3,6 +3,7 @@ const {API_KEY} = process.env;          //Se trae la KEY de la API para procesar
 const axios = require('axios')
 const{Recipe, Diets} = require('../db');
 const { response } = require('express');
+const Sequelize = require('sequelize')
 
 
 //Controller para obtener receta por id
@@ -16,8 +17,11 @@ async function getRecipeByID(req, res){
         //Buscamos en la BD                         Verificar su el include está bien
         if(isNaN(id)){
         const response = await Recipe.findByPk(id, {include: Diets});
+        const{name, image, summary, health_Score, diets, stepByStep} = response
+                var dietas = diets.map(d=>d.name)
+        const respuesta =  {id, name, image,summary, health_Score, diets: dietas, stepByStep}      
         if(response){
-            res.status(200).json(response);
+            res.status(200).json(respuesta);
         }
         }else{
             const responseAPI = await axios.get(reqLink);
@@ -27,9 +31,12 @@ async function getRecipeByID(req, res){
                 const pasoApaso = function(){
                     var pasos =[]
                     var aux = data.analyzedInstructions[0];
+                    if(aux){
                     aux.steps.forEach(st => {
                         pasos.push(st.number +". "+ st.step)
-                    });
+                    })}else{
+                        pasos.push('No hay paso a paso registrado en la API')
+                    };
                     return pasos;
                 }
                 
@@ -61,7 +68,7 @@ async function getRecipeByName(req, res){
         var responseDB = [];
         var recipesDB=[];
         if(name){
-            responseDB = await Recipe.findAll({where: {name: name},
+            responseDB = await Recipe.findAll({where: {name: {[Sequelize.Op.iLike]: `%${name}%`}},
                 include: {
                     model: Diets,
                     attributes:['name'],
@@ -71,7 +78,8 @@ async function getRecipeByName(req, res){
                 }})
             responseDB.forEach((rec)=>{
                 const{id, name, image, summary, health_Score, diets, stepByStep} = rec
-                recipesDB.push({id, name, image,summary, health_Score, diets: diets.map(d=>d.name), stepByStep})
+                var dietas = diets.map(d=>d.name)
+                recipesDB.push({id, name, image,summary, health_Score, diets: dietas, stepByStep})
             })    
 
             const linkRequest = `https://api.spoonacular.com/recipes/complexSearch?query=${name}&apiKey=${API_KEY}&number=100&addRecipeInformation=true`
@@ -118,8 +126,8 @@ async function getRecipeByName(req, res){
                 }})
             responseDB.forEach((rec)=>{
                 const{id, name, image, summary, health_Score, diets, stepByStep} = rec
-                var dietas = diets.map(d=>d.name)
-                recipesDB.push({id, name, image,summary, health_Score, diets: dietas , stepByStep})
+                var dietas2 = diets.map(d=>d.name)
+                recipesDB.push({id, name, image,summary, health_Score, diets: dietas2, stepByStep})
             })       
         
    
@@ -168,7 +176,7 @@ async function getRecipeByName(req, res){
 async function createRecipe(req,res){
     const {name, image, summary, health_Score, stepByStep, diets} = req.body;
     if(!name, !image, !summary, !health_Score, !stepByStep, !diets){
-        res.status(404).send('Faltan datos obligatorios')
+        return res.status(404).send("Faltan datos obligatorios")
     }
     try{
         const newRecipe = await Recipe.create({name, image, summary, health_Score, stepByStep})
