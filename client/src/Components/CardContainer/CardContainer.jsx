@@ -30,7 +30,8 @@ export default function CardContainer() {
                 id={recipe.id}
                 image = {recipe.image}
                 name = {recipe.name}
-                diets = {recipe.diets}>
+                diets = {recipe.diets}
+                healthScore = {recipe.health_Score}>
                 </Cards>
               })
               } 
