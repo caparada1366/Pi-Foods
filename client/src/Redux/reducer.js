@@ -3,7 +3,9 @@
 const initialState ={
     recipes: [],
     recipesAux: [],
+    recipesDefault: [],
     diets: [],
+    recipesBuscadas: [],
     pagActual: 1
 
 }
@@ -14,7 +16,8 @@ export default function rootReducer(state = initialState, {type, payload}){
             return{
                 ...state,
                 recipes: payload,
-                recipesAux: payload
+                recipesAux: payload,
+                recipesDefault: payload
             }
         case 'GET_DIETS':
             return{
@@ -23,6 +26,10 @@ export default function rootReducer(state = initialState, {type, payload}){
             }
         case 'FILTRO_ORIGEN':
             var arrayFiltroOrigen=[];
+            state.recipes = state.recipesAux;
+            if(state.recipesBuscadas.length>0){
+
+            }
             if(payload === 'DB'){
                 arrayFiltroOrigen = state.recipes.filter((r)=>{
                      return isNaN(r.id)
@@ -39,7 +46,8 @@ export default function rootReducer(state = initialState, {type, payload}){
             
             return{
                 ...state,
-                recipes: arrayFiltroOrigen
+                recipes: arrayFiltroOrigen,
+                pagActual: 1
             }
         case 'FILTRO_DIETAS':
             var arrayDietas = payload;
@@ -54,13 +62,28 @@ export default function rootReducer(state = initialState, {type, payload}){
 
             return{
                 ...state,
-                recipes: filtroDietas
+                recipes: filtroDietas,
+                recipesAux: filtroDietas,
+                pagActual: 1
             }
         case 'QUITAR_FILTROS':
+            var filtradas = state.recipesDefault;
+            if(state.recipesBuscadas.length>0){
+                filtradas = state.recipesBuscadas;
+            }
             return {
                 ...state,
-                recipes: state.recipesAux
+                recipes: filtradas,
+                pagActual: 1
             }
+        case 'BORRAR_BUSQUEDA':
+            return{
+                ...state,
+                recipes: state.recipesDefault,
+                recipesAux: state.recipesDefault,
+                recipesBuscadas: [],
+                pagActual: 1
+            }    
         case 'ORDEN_ALFA':
             var ordenados = state.recipes;
             if(payload === 'A-Z'){
@@ -79,7 +102,8 @@ export default function rootReducer(state = initialState, {type, payload}){
             }
             return {
                 ...state,
-                recipes: ordenados
+                recipes: ordenados,
+                pagActual: 1
             }
         case 'ORDEN_HS':
             var ordenadosHS = state.recipes;
@@ -91,7 +115,8 @@ export default function rootReducer(state = initialState, {type, payload}){
             }
             return {
                 ...state,
-                recipes: ordenadosHS
+                recipes: ordenadosHS,
+                pagActual: 1
             }
         case 'PREV_PAGE':
             return {
@@ -103,10 +128,18 @@ export default function rootReducer(state = initialState, {type, payload}){
                 ...state,
                 pagActual: state.pagActual+1
             }
+        case 'IR_PAGE':
+            return {
+                ...state,
+                pagActual: payload
+            }    
         case 'SEARCH_RECIPE':
             return {
                 ...state,
-                recipes: payload
+                recipes: payload,
+                recipesAux: payload,
+                recipesBuscadas: payload,
+                pagActual: 1
             }
          default: 
          return state;   

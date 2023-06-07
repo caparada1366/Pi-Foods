@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 //Acción que trae las recetas de la api y la BD
-export function getRecipes(){   
+export function getRecipes(){
+       
     return async (dispatch) =>{
         const data = (await axios.get('http://localhost:3001/recipes')).data
         dispatch({
@@ -62,6 +63,13 @@ export function quitarFiltros(){
     }
 }
 
+//Acción para volver al default y borrar los resultados de la busqueda
+export function borrarBusqueda(){
+    return{
+        type: 'BORRAR_BUSQUEDA'
+    }
+}
+
 //Acción para avanzar de página 
 export function nextPage(){
     return {
@@ -73,6 +81,14 @@ export function nextPage(){
 export function prevPage(){
     return {
         type: 'PREV_PAGE'
+    }
+}
+
+//Acción para ir a la página seleccionada
+export function irPage(pagina){
+    return{
+        type: 'IR_PAGE',
+        payload: pagina
     }
 }
 

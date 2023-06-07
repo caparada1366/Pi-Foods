@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #faeecf; /* Cambia el color de fondo a tu gusto */
+    background-color: rgb(216, 205, 255); /* Cambia el color de fondo a tu gusto */
     overflow: hidden; /* Evita que los elementos floten fuera de la barra de navegación */
     border: 1px solid black;
     display: flex;

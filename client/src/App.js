@@ -5,14 +5,21 @@ import CardContainer from './Components/CardContainer/CardContainer'
 import FormCreateRecipe from './Components/FormCrearReceta/FormCrearReceta'
 import Detail from './Components/Detail/Detail';
 import {useLocation, Routes, Route, useNavigate} from 'react-router-dom'
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getRecipes, getDiets } from './Redux/actions';
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  function onSearch(receta){
+  
+  useEffect(()=>{
+    dispatch(getRecipes())
+    dispatch(getDiets());
+  },[])
 
-  }
   
   function onClick(){
     navigate('/home')

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {filtrarDieta, filtrarOrigen, ordenarAlfa, ordenarHealthScore, quitarFiltros } from '../../Redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
+import './Filtros.css'
 
 export default function Filtros() {
 
@@ -21,7 +22,12 @@ export default function Filtros() {
   }
 
   function handleFilterDiets(e){
+    if(selectedDiets.length === 0){
+      alert('Seleccione al menos una dieta para filtrar')
+    }
+    else{
     dispatch(filtrarDieta(selectedDiets))
+    }
   }
   
   function handleDietsChange(e){
@@ -42,37 +48,53 @@ export default function Filtros() {
 
 
   return (
-    <div>
-        
-        <label for='OrdAZ'>Orden Alfabético</label>
+    <div className='filtros'>
+        <div>
+        <label for='OrdAZ' style={{alignSelf: 'center'}}>Orden Alfabético</label>
+        <div>
         <select onChange={handleSortName} name='Orden Alfabetico' id='OrdAZ'>
           <option value='default'>-</option>
           <option value='A-Z'>A-Z</option>
           <option value='Z-A'>Z-A</option>
         </select>
-
-        <label for='OrdHS'>Orden Healt Score</label>
+        </div>
+        </div>
+        <div>
+        <label for='OrdHS' style={{alignSelf: 'center'}}>Orden Health Score</label>
+        <div>
         <select onChange={handleSortHS} name='Orden Health Score' id='OrdHS'>
             <option value='default'>-</option>
             <option value="Ascendente">Ascendente</option>
             <option value="Descendente">Descendente</option>
         </select>
-
-        <label for='filOrigen'>Filtrar por origen</label>
+        </div>
+        </div>
+        <div>
+        <label for='filOrigen' style={{alignSelf: 'center'}}>Filtrar por origen</label>
+        <div>
         <select onChange={handleFilterOrigen} name= 'Filtro Origen' id='FilOri'>
             <option value='Todos'>Todos</option>
             <option value='API'>API</option>
             <option value='DB'>DB</option>
         </select>
+        </div>
+        </div>
         <div>
             
-            <label for='filDiets'>Filtrar por dietas: </label>    
-                {diets && diets.map((d)=>{
-                    return <label> <input type='checkbox' name={d.name} checked={selectedDiets.includes(d.name)} onChange={handleDietsChange}/>{d.name}</label>
-                })}
-            <button onClick={handleFilterDiets}>Filtrar</button>     
+             
+              <div className='contenedorDietas'>
+              <label for='filDiets'>Filtrar por dietas: </label>   
+                  {diets && diets.map((d)=>{
+                      return <label> <input type='checkbox' name={d.name} checked={selectedDiets.includes(d.name)} onChange={handleDietsChange}/>{d.name}</label>
+                  })}   
+             
+            <button onClick={handleFilterDiets}style={{marginLeft: '55px', marginTop: '10px', marginBottom: '10px' }}>Filtrar por dietas</button>
+            </div>
+        <div style={{alignSelf: 'center', paddingBottom: '200px', paddingRight: '20px', }}>
+        <button onClick={handleQuitarFiltros} style={{fontWeight: 'bolder', marginTop: '30px'}}>Quitar filtros</button>
+        </div>        
         </div>   
-        <button onClick={handleQuitarFiltros}>Quitar filtros</button>
+        
     </div>
   )
 }

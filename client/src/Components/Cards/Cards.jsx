@@ -7,7 +7,7 @@ export default function Cards({image, name, diets, id}) {
     <Link to={`/detail/${id}`}>
     <div className='cards'>
       <h2>Nombre: {name}</h2>
-      <img className='img' src={image} alt={name} style={{width: '17vw'}}></img>
+      <img className='img' src={image} alt={name} style={{width: '17vw', height:'25vh'}}></img>
       <h3>Dietas: {diets.join(", ")}</h3>
     </div>
     </Link>

@@ -2,20 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import  axios  from 'axios';
 import './Detail.css'
+import Loading from '../Loading/Loading';
 
 export default function Detail() {
   var {id} = useParams();
   
   const[receta, setReceta] = useState({});
+  const[loading, setLoading]= useState(true);
 
-  useEffect(()=>{   
+
+  useEffect(()=>{
+    setTimeout(()=> {setLoading(false)},2500)
     axios.get(`http://localhost:3001/recipes/${id}`).then(({data})=>{
       if(data){
         setReceta(data)
       } else{
         window.alert(`No hay recetas con el id ${id}`)
       }
-    }).catch(err => err.message)
+    }).catch(err => alert(err.toString()))
   },[])
 
   function limpiarSummary(){
@@ -24,6 +28,8 @@ export default function Detail() {
   }
   return (
       <div className='detail'>
+        {loading === true ? <Loading></Loading> :
+        <div>   
         <h2>ID: {receta.id}</h2>
         <h2>Name: {receta.name}</h2>
         <h2>Health Score: {receta.health_Score}</h2>
@@ -37,7 +43,7 @@ export default function Detail() {
             return <li>{st}</li>
           })}
         </ul>
-        
+        </div>}
       </div>
      
         

@@ -5,15 +5,13 @@ import { getRecipes, getDiets  } from '../../Redux/actions';
 import Filtros from '../FIltros/Filtros';
 import './CardContainer.css'
 import Paginado from '../Paginado/Paginado';
+import Loading from '../Loading/Loading';
 
 export default function CardContainer() {
   const {recipes, pagActual} = useSelector((state)=>state);
   
   const dispatch = useDispatch();
-  useEffect(()=>{
-    dispatch(getRecipes())
-    dispatch(getDiets());
-  },[dispatch])
+ 
 
   let desde = (pagActual -1)*9
   let hasta = (pagActual* 9)
@@ -23,22 +21,30 @@ export default function CardContainer() {
 
   return (
     <div>
-      <Filtros></Filtros>
-      <div className='card_container'>
-      {
-        recipesPages && recipesPages.map((recipe)=>{
-          return <Cards
-          id={recipe.id}
-          image = {recipe.image}
-          name = {recipe.name}
-          diets = {recipe.diets}>
-          </Cards>
-        })
-        } 
+      <div className='containerFull'>
+        <div className='container'>
+          <div className='card_container'>
+            {
+              recipesPages && recipesPages.map((recipe)=>{
+                return <Cards
+                id={recipe.id}
+                image = {recipe.image}
+                name = {recipe.name}
+                diets = {recipe.diets}>
+                </Cards>
+              })
+              } 
+          </div>
+          <div className='filtros'>
+            <Filtros></Filtros>
+          </div>
+          
+        </div>    
+        <div className='paginado'>
+          <Paginado cantPages={cantPages}/>
+        </div>
       </div>
-      <div>
-        <Paginado cantPages={cantPages}/>
-      </div>
+      
     </div>
   )
 }

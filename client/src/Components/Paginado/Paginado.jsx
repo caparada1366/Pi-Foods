@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { nextPage, prevPage } from '../../Redux/actions';
+import { nextPage, prevPage, irPage } from '../../Redux/actions';
+import './Paginado.css'
 
 export default function Paginado({cantPages}) {
     const {pagActual} = useSelector((state)=>state);
@@ -14,22 +15,39 @@ export default function Paginado({cantPages}) {
         dispatch(prevPage());
     }
 
-  return (
-    <div>
-        {pagActual > 1 ? (
-        <div>
-          <button onClick={prevP}>PREV</button>
-          <p>{pagActual - 1}</p>
-        </div>
-      ) : null}
+    function irPag(p){
+      dispatch(irPage(p))
+      
+    }
 
-      <h3>{pagActual}</h3>
-      {pagActual < cantPages ? (
+  return (
+    
+      <div className='paginado'>
+          {pagActual > 1 ? (
+          <div>
+            <button className='item' onClick={prevP}>PREV</button>
+            {pagActual>2 ?(
+               <a className='item' onClick={()=>irPag(pagActual-2)}>  {pagActual -2}  </a>
+            ):null}
+            <a onClick={()=>irPag(pagActual-1)}>  {pagActual -1}  </a>
+            
+          </div>
+        ) : null}
         <div>
-          <p>{pagActual + 1}</p>
-          <button onClick={nextP}>NEXT</button>
+        <a className='item' style={{color: 'red'}} onClick={()=>irPag(pagActual)}>  {pagActual}  </a>
         </div>
-      ) : null}
-    </div>
+        {pagActual < cantPages ? (
+          <div>
+            <div>
+            <a className='item' onClick={()=>irPag(pagActual+1)}>  {pagActual +1}  </a>
+            {pagActual< cantPages-1 ?(
+               <a  className='item'onClick={()=>irPag(pagActual+2)}>  {pagActual +2}  </a>
+            ):null}
+            <button className='item' onClick={nextP}>NEXT</button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    
   )
 }

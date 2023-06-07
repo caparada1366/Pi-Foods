@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { useDispatch } from 'react-redux';
-import { searchRecipe, quitarFiltros } from '../../Redux/actions';
+import { searchRecipe, borrarBusqueda } from '../../Redux/actions';
 
 
 export default function SearchBar() {
@@ -22,13 +22,13 @@ export default function SearchBar() {
   }
 
   function handleClickBorrar(e){
-   dispatch(quitarFiltros())
-   
+   dispatch(borrarBusqueda())
+   setReceta("");
   }
 
   return (
     <div>
-        <input onChange={handleChange} onKeyDown={handlePressEnter}></input>
+        <input onChange={handleChange} onKeyDown={handlePressEnter} value={receta}></input>
         <button onClick={handleClickSearch}>Buscar Receta</button>
         <button onClick={handleClickBorrar}>Borrar busqueda</button>
     </div>

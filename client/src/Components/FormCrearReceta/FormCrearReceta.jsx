@@ -3,6 +3,7 @@ import validation from './validation'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { getRecipes } from '../../Redux/actions'
+import './FormCrearReceta.css'
 
 
 export default function FormCrearReceta() {
@@ -12,7 +13,7 @@ export default function FormCrearReceta() {
   const [receta, setReceta]=useState({
     name: "",
     summary: "",
-    health_Score: 0,
+    health_Score: "",
     image: "",
   })
 
@@ -64,9 +65,13 @@ export default function FormCrearReceta() {
 
   async function  handleSubmitForm(e){
     e.preventDefault();
+    var errores = Object.values(errors)
     if(pasos.length < 1 ){
       alert('Debe ingresar al menos un paso')
-    }else{
+    }else if(errores.length >0 ){
+      alert(errores.join(', '))
+    }
+    else{
       try{
       const datos = {
         name: receta.name,
@@ -78,6 +83,12 @@ export default function FormCrearReceta() {
       }
       await axios.post('http://localhost:3001/recipes',datos)
         alert('Receta creada')
+        setReceta({ name: "",
+        summary: "",
+        health_Score: "",
+        image: "",});
+        setPasos([]);
+        setSelectedDiets([]);
         dispatch(getRecipes())
       }catch(err){
         alert(err.message)
@@ -95,35 +106,38 @@ export default function FormCrearReceta() {
   }
 
   return (
-    <div>
+    
+    <div className='formCrearReceta'>
       <form className='form'>
-        <label>Nombre: <input name='name' value={receta.name} onChange={handleChange}/></label>
-        {errors.name && <p style={{color: 'red'}}>{errors.name}</p>}
-        <label>Imagen url: <input name='image' value={receta.image} onChange={handleChange}/></label>
-        {errors.image && <p style={{color: 'red'}}>{errors.image}</p>}
-        <label>Health Score: <input name='health_Score' value={receta.health_Score} onChange={handleChange}/></label>
-        {errors.health_Score && <p style={{color: 'red'}}>{errors.health_Score}</p>}
-        <label>Resumen: <textarea name='summary' value={receta.summary} onChange={handleChange}/></label>
-        {errors.summary && <p style={{color: 'red'}}>{errors.summary}</p>}
-
-        <label>Paso: <textarea name='paso' value={inputPaso} onChange={handleChangePaso}/></label>
-        {errors.steps && <p style={{color: 'red'}}>{errors.steps}</p>}
-        <button onClick={handleSubmitPaso}>Añadir paso</button>
-        <div>
+        <div><label>Nombre: </label><input name='name' value={receta.name} onChange={handleChange}/>
+        {errors.name && <p style={{color: 'red'}}>{errors.name}</p>}</div>
+        <div><label>Imagen url: </label><input name='image' value={receta.image} onChange={handleChange}/>
+        {errors.image && <p style={{color: 'red'}}>{errors.image}</p>}</div>
+        <div><label>Health Score: </label><input name='health_Score' value={receta.health_Score} onChange={handleChange}/>
+        {errors.health_Score && <p style={{color: 'red'}}>{errors.health_Score}</p>}</div>
+        <div><label>Resumen: </label><textarea style ={{width: '300px', height: '50px'}} name='summary' value={receta.summary} onChange={handleChange}/>
+        {errors.summary && <p style={{color: 'red'}}>{errors.summary}</p>}</div>
+        <div style={{marginLeft: '6vw', marginRight: '6vw'}}>
+          <label>Dietas: </label>
           {diets && diets.map((diet)=>{
-            return <label><input type='checkbox' name={diet.name} checked={selectedDiets.includes(diet.name)} onChange={handleChangeDiets}/>{diet.name} </label>
+            return <label><input type='checkbox' style={{cursor: 'pointer'}} name={diet.name} checked={selectedDiets.includes(diet.name)} onChange={handleChangeDiets}/>{diet.name} </label>
           })}
         </div>
-        <button type='submit' onClick={handleSubmitForm}>Crear Receta</button>
-
-        <div>
-        Pasos:
-        <ol>
-        {pasos && pasos.map((st)=>{
-            return <li>{st}</li>
-          })}
-        </ol>
+        <div className='contenedorPasos'>
+          <div className='leftf-div'><label>Paso: </label><textarea style ={{width: '500px', height: '75px'}}name='paso' value={inputPaso} onChange={handleChangePaso}/>
+          {errors.steps && <p style={{color: 'red'}}>{errors.steps}</p>}
+          <button className='button' onClick={handleSubmitPaso} style={{cursor: 'pointer'}}>Añadir paso</button></div>
+          
+          <div className='rightf-div'>
+          <b>Pasos añadidos:</b>
+          <ol style={{backgroundColor: 'rgba(168, 190, 190, 0.301)', fontWeight: 'bold'}}>
+          {pasos && pasos.map((st)=>{
+              return <li>{st}</li>
+            })}
+          </ol>
+        </div>
       </div>
+      <button className='button' type='submit' onClick={handleSubmitForm} style={{cursor: 'pointer'}}>Crear Receta</button>
       </form>
      
     </div>
