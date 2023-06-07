@@ -2,7 +2,7 @@ import axios from 'axios'
 
 //Acción que trae las recetas de la api y la BD
 export function getRecipes(){
-    var link1 = 'http://localhost:3001/recipes'
+    var link1 = '/recipes'
     return async (dispatch) =>{
         const data = (await axios.get(link1)).data
         dispatch({
@@ -14,7 +14,7 @@ export function getRecipes(){
 
 //Acción que trae las dietas de la API y la BD
 export function getDiets(){
-    var link2 = 'http://localhost:3001/diets'
+    var link2 = '/diets'
     return async (dispatch) =>{
         const data = (await axios.get(link2)).data
         dispatch({
